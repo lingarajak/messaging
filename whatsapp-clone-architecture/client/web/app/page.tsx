@@ -14,6 +14,9 @@ export default function Home() {
   const [replyingTo, setReplyingTo] = useState(null);
   const [sharingLocation, setSharingLocation] = useState(false);
   const [disappearingTimer, setDisappearingTimer] = useState(0);
+  const [inRoom, setInRoom] = useState(false);
+  const [screenSharing, setScreenSharing] = useState(false);
+  const [translating, setTranslating] = useState({});
   const localVideo = useRef(null);
   const remoteVideo = useRef(null);
   const pc = useRef(null);
@@ -119,6 +122,42 @@ export default function Home() {
       setSharingLocation(false);
     }
   };
+  const createRoom = async () => {
+    const res = await fetch('http://localhost:4007/v1/rooms/create', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name: 'Voice Room', type: 'voice', hostId: 'user123' })
+    });
+    const { roomId } = await res.json();
+    window.open(`/room/${roomId}`, '_blank');
+  };
+  const toggleScreenShare = async () => {
+    if (!screenSharing) {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const track = stream.getVideoTracks()[0];
+      socket.emit('room:produce', { roomId: 'current', userId: 'user123', kind: 'video', isScreen: true });
+      setScreenSharing(true);
+    } else {
+      setScreenSharing(false);
+    }
+  };
+  const translateMessage = async (msgId, text) => {
+    const res = await fetch('http://localhost:4008/v1/translate', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ text, target: 'en', msgId })
+    });
+    const { translated } = await res.json();
+    setTranslating(prev => ({ ...prev, [msgId]: translated }));
+  };
+  const replyToStory = (statusId) => {
+    const text = prompt('Reply to story:');
+    const reaction = prompt('Add reaction emoji (optional):');
+    if (text || reaction) {
+      fetch(`http://localhost:4002/v1/status/${statusId}/reply`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ from: 'user123', text, reaction })
+      });
+    }
+  };
   const setDisappearing = () => {
     const timer = prompt('Disappearing timer: 0=off, 86400=24h, 604800=7d');
     if (timer) socket.emit('chat:disappearing', { chatId: 'user456', timer: parseInt(timer), userId: 'user123' });
@@ -175,6 +214,7 @@ export default function Home() {
                 <div className="w-full h-full rounded-full bg-tg-sidebar"></div>
               </div>
               {s.userId}
+              <button onClick={() => replyToStory(s.statusId)} className="ml-2 text-xs">↩️💬</button>
             </div>)}
           </div>
         )}
@@ -209,6 +249,7 @@ export default function Home() {
                   <button onClick={() => addReaction(m.msgId, '👍')}>👍</button>
                   <button onClick={() => addReaction(m.msgId, '❤️')}>❤️</button>
                   <button onClick={() => addReaction(m.msgId, '😂')}>😂</button>
+                  <button onClick={() => translateMessage(m.msgId, m.text)}>🌐</button>
                   <button onClick={() => editMessage(m.msgId)}>✏️</button>
                   <button onClick={() => deleteMessage(m.msgId)}>🗑️</button>
                   <button onClick={() => pinMessage(m.msgId)}>📌</button>
@@ -217,6 +258,8 @@ export default function Home() {
                   <button onClick={() => startPayment()}>💳</button>
                   <button onClick={() => toggleLocation()}>📍</button>
                   <button onClick={() => setDisappearing()}>⏱️</button>
+                  <button onClick={() => createRoom()}>🎙️</button>
+                  <button onClick={() => toggleScreenShare()}>🖥️</button>
                 </div>
               </div>
             </div>

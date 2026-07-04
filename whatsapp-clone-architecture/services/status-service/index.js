@@ -45,3 +45,37 @@ cron.schedule('0 * * * *', async () => {
 });
 
 app.listen(4002, () => console.log('Status service on :4002'));
+
+// Reply to story
+app.post('/v1/status/:statusId/reply', async (req, res) => {
+  const { from, text, reaction } = req.body;
+  const replyId = `reply:${req.params.statusId}:${Date.now()}`;
+  await redis.hset(replyId, 'from', from, 'text', text || '', 'reaction', reaction || '', 'timestamp', Date.now());
+  await redis.zadd(`${req.params.statusId}:replies`, Date.now(), replyId);
+  
+  // Notify status owner
+  const owner = req.params.statusId.split(':')[1];
+  await fetch('http://chat-service:4000/internal/send', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      to: owner,
+      from: from,
+      type: 'story_reply',
+      text: text,
+      reaction: reaction,
+      storyId: req.params.statusId
+    })
+  });
+  res.json({ replyId });
+});
+
+// Get story replies
+app.get('/v1/status/:statusId/replies', async (req, res) => {
+  const replyIds = await redis.zrange(`${req.params.statusId}:replies`, 0, -1);
+  const replies = [];
+  for (const id of replyIds) {
+    replies.push(await redis.hgetall(id));
+  }
+  res.json(replies);
+});
