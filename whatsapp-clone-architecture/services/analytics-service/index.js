@@ -1,1 +1,1 @@
-// analytics-service - V10.6\nconsole.log('analytics-service running');
+// analytics-service - V10.7\nconsole.log('analytics-service running');

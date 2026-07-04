@@ -1,8 +1,1 @@
-{
-  "name": "rooms-service",
-  "version": "10.6.0",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node index.js"
-  }
-}
+{"name":"rooms-service","version":"10.7.0","main":"index.js","scripts":{"dev":"node index.js"},"dependencies":{"express":"^4.18.2","socket.io":"^4.7.2"}}

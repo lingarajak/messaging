@@ -1,1 +1,1 @@
-// miniapps-service - V10.6\nconsole.log('miniapps-service running');
+// miniapps-service - V10.7\nconsole.log('miniapps-service running');

@@ -1,1 +1,1 @@
-// livekit-e2ee-service - V10.6\nconsole.log('livekit-e2ee-service running');
+// livekit-e2ee-service - V10.7\nconsole.log('livekit-e2ee-service running');

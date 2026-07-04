@@ -1,1 +1,1 @@
-// search-service - V10.6\nconsole.log('search-service running');
+// search-service - V10.7\nconsole.log('search-service running');

@@ -1,1 +1,1 @@
-// channel-admin-service - V10.6\nconsole.log('channel-admin-service running');
+// channel-admin-service - V10.7\nconsole.log('channel-admin-service running');

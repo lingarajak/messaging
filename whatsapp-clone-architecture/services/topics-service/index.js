@@ -1,1 +1,1 @@
-// topics-service - V10.6\nconsole.log('topics-service running');
+// topics-service - V10.7\nconsole.log('topics-service running');

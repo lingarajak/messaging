@@ -1,1 +1,1 @@
-// moderation-service - V10.6\nconsole.log('moderation-service running');
+// moderation-service - V10.7\nconsole.log('moderation-service running');

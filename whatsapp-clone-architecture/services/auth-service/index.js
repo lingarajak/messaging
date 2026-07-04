@@ -1,1 +1,1 @@
-// auth-service - V10.6\nconsole.log('auth-service running');
+// auth-service - V10.7\nconsole.log('auth-service running');
