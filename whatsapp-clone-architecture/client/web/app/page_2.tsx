@@ -14,6 +14,9 @@ export default function Home() {
   const [replyingTo, setReplyingTo] = useState(null);
   const [sharingLocation, setSharingLocation] = useState(false);
   const [disappearingTimer, setDisappearingTimer] = useState(0);
+  const [inRoom, setInRoom] = useState(false);
+  const [screenSharing, setScreenSharing] = useState(false);
+  const [translating, setTranslating] = useState({});
   const localVideo = useRef(null);
   const remoteVideo = useRef(null);
   const pc = useRef(null);
@@ -119,40 +122,45 @@ export default function Home() {
       setSharingLocation(false);
     }
   };
+  const createRoom = async () => {
+    const res = await fetch('http://localhost:4007/v1/rooms/create', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name: 'Voice Room', type: 'voice', hostId: 'user123' })
+    });
+    const { roomId } = await res.json();
+    window.open(`/room/${roomId}`, '_blank');
+  };
+  const toggleScreenShare = async () => {
+    if (!screenSharing) {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      const track = stream.getVideoTracks()[0];
+      socket.emit('room:produce', { roomId: 'current', userId: 'user123', kind: 'video', isScreen: true });
+      setScreenSharing(true);
+    } else {
+      setScreenSharing(false);
+    }
+  };
+  const translateMessage = async (msgId, text) => {
+    const res = await fetch('http://localhost:4008/v1/translate', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ text, target: 'en', msgId })
+    });
+    const { translated } = await res.json();
+    setTranslating(prev => ({ ...prev, [msgId]: translated }));
+  };
+  const replyToStory = (statusId) => {
+    const text = prompt('Reply to story:');
+    const reaction = prompt('Add reaction emoji (optional):');
+    if (text || reaction) {
+      fetch(`http://localhost:4002/v1/status/${statusId}/reply`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ from: 'user123', text, reaction })
+      });
+    }
+  };
   const setDisappearing = () => {
     const timer = prompt('Disappearing timer: 0=off, 86400=24h, 604800=7d');
     if (timer) socket.emit('chat:disappearing', { chatId: 'user456', timer: parseInt(timer), userId: 'user123' });
-  };
-  const recordVideoNote = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-    const chunks = [];
-    recorder.ondataavailable = e => chunks.push(e.data);
-    recorder.onstop = async () => {
-      const blob = new Blob(chunks, { type: 'video/webm' });
-      const url = await uploadMedia(blob, 'note.webm', 'video/webm');
-      socket.emit('message:send', { to: 'user456', type: 'video_note', mediaKey: url, msgId: crypto.randomUUID() });
-    };
-    recorder.start();
-    setTimeout(() => recorder.stop(), 60000); // 60s max
-  };
-  const createPoll = () => {
-    const question = prompt('Poll question:');
-    const options = prompt('Options (comma separated):').split(',');
-    if (question && options.length) socket.emit('poll:create', { chatId: 'user456', question, options, userId: 'user123' });
-  };
-  const openCatalog = async () => {
-    const res = await fetch('http://localhost:4008/v1/business/business123/catalog');
-    const products = await res.json();
-    alert('Catalog: ' + products.map(p => p.name).join(', '));
-  };
-  const summarizeChat = async () => {
-    const res = await fetch('http://localhost:4007/v1/ai/summarize', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ chatId: 'user456', limit: 50 })
-    });
-    const { summary } = await res.json();
-    alert('AI Summary:\n' + summary);
   };
   const createChannel = () => {
     const name = prompt('Channel name:');
@@ -206,6 +214,7 @@ export default function Home() {
                 <div className="w-full h-full rounded-full bg-tg-sidebar"></div>
               </div>
               {s.userId}
+              <button onClick={() => replyToStory(s.statusId)} className="ml-2 text-xs">↩️💬</button>
             </div>)}
           </div>
         )}
@@ -224,9 +233,7 @@ export default function Home() {
               {m.replyTo && <div className="text-xs text-tg-secondary border-l-2 border-tg-accent pl-2 mb-1">Replying to: {m.replyTo}</div>}
               <div className="flex items-end">
                 <div className="bg-tg-bubble-in inline-block p-2 rounded-lg max-w-md">
-                  {m.type==='poll' ? (
-                    <PollComponent pollId={m.pollId} socket={socket} />
-                  ) : m.type==='voice' ? (
+                  {m.type==='voice' ? (
                     <audio controls src={`http://localhost:9000/whatsapp-media/${m.mediaKey}`} className="w-48" />
                   ) : (
                     <span>{m.text || m.message}</span>
@@ -242,6 +249,7 @@ export default function Home() {
                   <button onClick={() => addReaction(m.msgId, '👍')}>👍</button>
                   <button onClick={() => addReaction(m.msgId, '❤️')}>❤️</button>
                   <button onClick={() => addReaction(m.msgId, '😂')}>😂</button>
+                  <button onClick={() => translateMessage(m.msgId, m.text)}>🌐</button>
                   <button onClick={() => editMessage(m.msgId)}>✏️</button>
                   <button onClick={() => deleteMessage(m.msgId)}>🗑️</button>
                   <button onClick={() => pinMessage(m.msgId)}>📌</button>
@@ -250,10 +258,8 @@ export default function Home() {
                   <button onClick={() => startPayment()}>💳</button>
                   <button onClick={() => toggleLocation()}>📍</button>
                   <button onClick={() => setDisappearing()}>⏱️</button>
-                  <button onClick={() => recordVideoNote()}>📹</button>
-                  <button onClick={() => createPoll()}>📊</button>
-                  <button onClick={() => openCatalog()}>🛍️</button>
-                  <button onClick={() => summarizeChat()}>🤖</button>
+                  <button onClick={() => createRoom()}>🎙️</button>
+                  <button onClick={() => toggleScreenShare()}>🖥️</button>
                 </div>
               </div>
             </div>

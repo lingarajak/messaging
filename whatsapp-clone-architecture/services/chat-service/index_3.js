@@ -210,24 +210,6 @@ io.on('connection', async (socket) => {
   // Override message:send to check disappearing
   const originalSend = socket.on('message:send', async (data) => {});
 
-  
-  // Create Poll
-  socket.on('poll:create', async ({ chatId, question, options, userId }) => {
-    const pollId = `poll:${Date.now()}`;
-    await redis.hset(pollId, 'question', question, 'options', JSON.stringify(options), 'creator', userId, 'votes', '{}');
-    const msgId = `msg:${Date.now()}`;
-    await redis.hset(`msg:${msgId}`, 'type', 'poll', 'pollId', pollId, 'from', userId, 'to', chatId);
-    io.to(chatId).emit('message:receive', { type: 'poll', pollId, question, options, msgId, from: userId });
-  });
-
-  // Vote in Poll
-  socket.on('poll:vote', async ({ pollId, option, userId }) => {
-    const votes = JSON.parse(await redis.hget(pollId, 'votes') || '{}');
-    votes[userId] = option;
-    await redis.hset(pollId, 'votes', JSON.stringify(votes));
-    io.emit('poll:update', { pollId, votes });
-  });
-
   socket.on('disconnect', async () => {
     await redis.hdel('online_users', userId);
     await redis.del(`presence:${userId}`);
