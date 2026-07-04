@@ -1,5 +1,5 @@
 {
-  "name": "location-service",
+  "name": "moderation-service",
   "version": "10.0.0",
   "main": "index.js",
   "scripts": {
