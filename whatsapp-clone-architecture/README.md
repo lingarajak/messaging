@@ -1,17 +1,17 @@
-# WhatsApp-Clone V10.3 - Engagement + Personalization
+# WhatsApp-Clone V10.4 - Privacy + Archive + AI
 
 ## Overview
-V10.3 = V10.2 + Stories emoji replies, Folder-specific notifications, Scheduled channel posts.
+V10.4 = V10.3 + Anonymous Channel admins, Stories Highlights, Voice chat transcription.
 
-Total: 23 microservices, 48+ features.
+Total: 26 microservices, 52+ features.
 
 ## Services
 | Port | Service | Purpose | Version |
 | --- | --- | --- | --- |
 | 4000 | chat-service | Core WebSocket + E2EE + groups + communities + usernames | V1 |
 | 4001 | search-service | ElasticSearch indexing | V3 |
-| 4002 | status-service | 24h Stories + ads + **emoji replies** | V3 |
-| 4003 | scheduler-service | BullMQ scheduled messages + **channel posts** | V5 |
+| 4002 | status-service | 24h Stories + ads + emoji replies + **highlights** | V3 |
+| 4003 | scheduler-service | BullMQ scheduled messages + channel posts | V5 |
 | 4004 | bot-service | Telegram-style bot API | V5 |
 | 4005 | payment-service | Stripe in-chat payments | V6 |
 | 4006 | location-service | Live GPS streaming | V6 |
@@ -28,20 +28,23 @@ Total: 23 microservices, 48+ features.
 | 4017 | monetization-service | Stories ads + revenue share | V10.2 |
 | 4018 | auth-service | Usernames + phone optional | V10.2 |
 | 4019 | channel-comments-service | Channel post threads | V10.2 |
-| 4020 | status-engagement-service | **NEW** Stories emoji reactions + replies | V10.3 |
-| 4021 | notification-prefs-service | **NEW** Per-folder notification rules | V10.3 |
+| 4020 | status-engagement-service | Stories emoji reactions + replies | V10.3 |
+| 4021 | notification-prefs-service | Per-folder notification rules | V10.3 |
+| 4022 | channel-admin-service | **NEW** Anonymous Channel admins | V10.4 |
+| 4023 | highlights-service | **NEW** Stories Highlights archive | V10.4 |
+| 4024 | transcription-service | **NEW** Live voice chat transcription | V10.4 |
 | Kafka | notification-service | FCM/APNs push | V3 |
 
-## New in V10.3
+## New in V10.4
 
-### 1. Stories Emoji Replies `:4020`
-status-engagement-service handles emoji reactions on Stories. Tap Story → 8 quick emojis + reply box. Sends DM to Story author with Story thumbnail context. API: `POST /v1/stories/{id}/react`
+### 1. Anonymous Admins `:4022`
+channel-admin-service lets Channel admins post as "Channel Name" instead of personal account. Toggle per-post or set as default. Messages show channel avatar + name, no admin identity exposed. API: `POST /v1/channels/{id}/post-anon`
 
-### 2. Folder-Specific Notifications `:4021`
-notification-prefs-service stores per-folder rules. Users can set: Work folder = muted 9-5, Family = always notify, Channels = daily digest only. Overrides global settings. API: `PUT /v1/folders/{id}/notify`
+### 2. Stories Highlights `:4023`
+highlights-service creates permanent Story collections on profile. Users save expiring Stories to Highlights with cover + title. Stored in MinIO, metadata in Postgres. Viewable forever until deleted. API: `POST /v1/highlights`
 
-### 3. Scheduled Channel Posts `:4003`
-scheduler-service extended to support Channel posts. Admins schedule posts with media/polls. Uses same BullMQ as DMs. UI: 📅 button in Channel composer. API: `POST /v1/channels/{id}/schedule`
+### 3. Voice Chat Transcription `:4024`
+transcription-service uses AWS Transcribe Streaming for live captions in rooms-service. Real-time text appears under speakers in voice/video rooms. Stored with room recording. Toggle per-room. API: WebSocket `/v1/transcribe/stream`
 
 ## Quick Start
 ```bash
@@ -56,17 +59,18 @@ export LIVEKIT_API_KEY=devkey
 export LIVEKIT_API_SECRET=secret
 export ADS_PROVIDER_KEY=xxx
 
-# Start all 23 services :4000 to :4021
-cd services/status-engagement-service && npm i && npm run dev # :4020 NEW
-cd ../notification-prefs-service && npm i && npm run dev     # :4021 NEW
-# ... start other 21 services including updated scheduler-service
+# Start all 26 services :4000 to :4024
+cd services/channel-admin-service && npm i && npm run dev     # :4022 NEW
+cd ../highlights-service && npm i && npm run dev              # :4023 NEW
+cd ../transcription-service && npm i && npm run dev           # :4024 NEW
+# ... start other 23 services
 
 cd ../../client/web && npm i && npm run dev
 ```
 
-## UI Updates in V10.3
-- Stories: Emoji bar appears on tap, swipe up to reply
-- Settings → Notifications → Folders → per-folder toggles
-- Channel composer: 📅 Schedule button → date/time picker
+## UI Updates in V10.4
+- Channel composer: 👤 Anonymous toggle → posts as "Channel"
+- Profile: + button in Highlights section → create collection
+- Voice rooms: CC button → live captions overlay on speakers
 
-See Project-History.md for V1-V10.2 changelog.
+See Project-History.md for V1-V10.3 changelog.

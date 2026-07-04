@@ -3,14 +3,18 @@ Generated: 2026-07-05
 
 ## Version History
 
-### V10.3: Engagement + Personalization
+### V10.4: Privacy + Archive + AI
 **Added**: 
-1. Status Engagement service - Emoji reactions + DM replies on Stories
-2. Notification Prefs service - Per-folder notification rules
-3. Scheduler extension - Scheduled Channel posts with media
+1. Channel Admin service - Anonymous posting as Channel identity
+2. Highlights service - Permanent Story collections on profiles
+3. Transcription service - Live captions in voice/video rooms via AWS Transcribe
 
-**Download**: whatsapp-clone-architecture-v10.3.zip
-**Total**: 23 microservices, 48+ features
+**Download**: whatsapp-clone-architecture-v10.4.zip
+**Total**: 26 microservices, 52+ features
+
+### V10.3: Engagement + Personalization
+**Added**: Stories emoji replies, Folder-specific notifications, Scheduled channel posts
+**Total**: 23 microservices
 
 ### V10.2: Monetization + Identity + Engagement
 **Added**: Stories ads, @usernames, Channel comments

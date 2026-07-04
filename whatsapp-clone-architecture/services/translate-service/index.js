@@ -1,1 +1,1 @@
-// translate-service - V10.3\nconsole.log('translate-service running');
+// translate-service - V10.4\nconsole.log('translate-service running');
