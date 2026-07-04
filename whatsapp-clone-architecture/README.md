@@ -1,38 +1,26 @@
-# WhatsApp-Clone Architecture V8 - Polls & Quizzes
-Includes: All V7 + **Polls/Quizzes** with real-time voting
+# WhatsApp-Clone Architecture V9 - AI + Business
+Includes: All V6 + **AI Chat Summaries**, **Voice Transcription**, **Polls/Quizzes**, **Business Catalog + Carts**
 
-## What's New in V8
-1. **Polls**: `services/poll-service/` Create polls with multiple choice. Real-time vote counts via Socket.IO
-2. **Quizzes**: Quiz mode with correct answer. Shows results after voting
-3. **UI**: Click 📊 → create poll. Vote by clicking option. Animated progress bars show percentages
-4. **Features**: Anonymous polls, multiple choice, 30-day expiry, close poll
+## What's New in V9
+1. **AI Summaries**: `services/ai-service/` GPT-4o-mini summarizes last 100 messages. Click 🤖 button
+2. **Voice Transcription**: AWS Transcribe auto-transcribes voice notes. Shows text under audio
+3. **Polls/Quizzes**: `services/poll-service/` Create polls, vote, real-time results. Quiz mode with correct answer
+4. **Business Catalog**: `services/catalog-service/` Product listings, cart, checkout. PostgreSQL + Redis
 
-## New Service
-- **poll-service**:4009 - Poll creation, voting, results with Redis
+## New Services
+- **ai-service**:4007 - OpenAI + AWS Transcribe
+- **poll-service**:4008 - Poll/quiz logic + Redis
+- **catalog-service**:4009 - Products + carts + orders
 
-## New UI
-- 📊 - Create poll or quiz
-- Click option to vote
-- Live percentage bars
-- Quiz shows correct answer after voting
+## New UI Buttons
+- 📊 - Create poll/quiz
+- 🛒 - Open business catalog
+- 🤖 - Summarize chat with AI
 
 ## Quick Start
 ```bash
-cd services/poll-service && npm install && npm run dev   # :4009
+cd services/ai-service && npm install && npm run dev        # :4007 - needs OPENAI_API_KEY
+cd services/poll-service && npm install && npm run dev      # :4008
+cd services/catalog-service && npm install && npm run dev   # :4009
 ```
-
-## API Examples
-```bash
-# Create poll
-curl -X POST localhost:4009/v1/polls -d '{"question":"Best framework?","options":["React","Vue"],"chatId":"group123"}'
-
-# Vote
-curl -X POST localhost:4009/v1/polls/poll:xxx/vote -d '{"optionIndex":0,"userId":"user123"}'
-
-# Create quiz
-curl -X POST localhost:4009/v1/polls -d '{"question":"2+2?","options":["3","4","5"],"isQuiz":true,"correctAnswer":1}'
-```
-
-## Socket Events
-- `poll:create` → creates poll → broadcasts `message:receive` with type: 'poll'
-- `poll:vote` → records vote → broadcasts `poll:update` with new counts
+Add `OPENAI_API_KEY` and AWS creds for transcription.

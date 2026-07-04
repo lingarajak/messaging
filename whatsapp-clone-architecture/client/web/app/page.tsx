@@ -119,40 +119,20 @@ export default function Home() {
       setSharingLocation(false);
     }
   };
+  const createPoll = () => {
+    const q = prompt('Poll question:');
+    const opts = prompt('Options comma-separated:')?.split(',');
+    if (q && opts) socket.emit('poll:create', { question: q, options: opts, chatId: 'user456' });
+  };
+  const openCatalog = () => {
+    window.open('http://localhost:4009/v1/catalog/business123', '_blank');
+  };
+  const summarizeChat = () => {
+    socket.emit('ai:summarize', { chatId: 'user456' });
+  };
   const setDisappearing = () => {
     const timer = prompt('Disappearing timer: 0=off, 86400=24h, 604800=7d');
     if (timer) socket.emit('chat:disappearing', { chatId: 'user456', timer: parseInt(timer), userId: 'user123' });
-  };
-  const recordVideoNote = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-    const chunks = [];
-    recorder.ondataavailable = e => chunks.push(e.data);
-    recorder.onstop = async () => {
-      const blob = new Blob(chunks, { type: 'video/webm' });
-      const url = await uploadMedia(blob, 'note.webm', 'video/webm');
-      socket.emit('message:send', { to: 'user456', type: 'video_note', mediaKey: url, msgId: crypto.randomUUID() });
-    };
-    recorder.start();
-    setTimeout(() => recorder.stop(), 60000); // 60s max
-  };
-  const createPoll = () => {
-    const question = prompt('Poll question:');
-    const options = prompt('Options (comma separated):').split(',');
-    if (question && options.length) socket.emit('poll:create', { chatId: 'user456', question, options, userId: 'user123' });
-  };
-  const openCatalog = async () => {
-    const res = await fetch('http://localhost:4008/v1/business/business123/catalog');
-    const products = await res.json();
-    alert('Catalog: ' + products.map(p => p.name).join(', '));
-  };
-  const summarizeChat = async () => {
-    const res = await fetch('http://localhost:4007/v1/ai/summarize', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ chatId: 'user456', limit: 50 })
-    });
-    const { summary } = await res.json();
-    alert('AI Summary:\n' + summary);
   };
   const createChannel = () => {
     const name = prompt('Channel name:');
@@ -224,9 +204,7 @@ export default function Home() {
               {m.replyTo && <div className="text-xs text-tg-secondary border-l-2 border-tg-accent pl-2 mb-1">Replying to: {m.replyTo}</div>}
               <div className="flex items-end">
                 <div className="bg-tg-bubble-in inline-block p-2 rounded-lg max-w-md">
-                  {m.type==='poll' ? (
-                    <PollComponent pollId={m.pollId} socket={socket} />
-                  ) : m.type==='voice' ? (
+                  {m.type==='voice' ? (
                     <audio controls src={`http://localhost:9000/whatsapp-media/${m.mediaKey}`} className="w-48" />
                   ) : (
                     <span>{m.text || m.message}</span>
@@ -250,9 +228,8 @@ export default function Home() {
                   <button onClick={() => startPayment()}>💳</button>
                   <button onClick={() => toggleLocation()}>📍</button>
                   <button onClick={() => setDisappearing()}>⏱️</button>
-                  <button onClick={() => recordVideoNote()}>📹</button>
                   <button onClick={() => createPoll()}>📊</button>
-                  <button onClick={() => openCatalog()}>🛍️</button>
+                  <button onClick={() => openCatalog()}>🛒</button>
                   <button onClick={() => summarizeChat()}>🤖</button>
                 </div>
               </div>

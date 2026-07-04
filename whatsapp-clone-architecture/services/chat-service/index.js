@@ -211,21 +211,24 @@ io.on('connection', async (socket) => {
   const originalSend = socket.on('message:send', async (data) => {});
 
   
-  // Create Poll
-  socket.on('poll:create', async ({ chatId, question, options, userId }) => {
-    const pollId = `poll:${Date.now()}`;
-    await redis.hset(pollId, 'question', question, 'options', JSON.stringify(options), 'creator', userId, 'votes', '{}');
-    const msgId = `msg:${Date.now()}`;
-    await redis.hset(`msg:${msgId}`, 'type', 'poll', 'pollId', pollId, 'from', userId, 'to', chatId);
-    io.to(chatId).emit('message:receive', { type: 'poll', pollId, question, options, msgId, from: userId });
+  // AI Summary request
+  socket.on('ai:summarize', async ({ chatId }) => {
+    const res = await fetch('http://ai-service:4007/v1/ai/summarize', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ chatId })
+    });
+    const { summary } = await res.json();
+    socket.emit('ai:summary', { chatId, summary });
   });
 
-  // Vote in Poll
-  socket.on('poll:vote', async ({ pollId, option, userId }) => {
-    const votes = JSON.parse(await redis.hget(pollId, 'votes') || '{}');
-    votes[userId] = option;
-    await redis.hset(pollId, 'votes', JSON.stringify(votes));
-    io.emit('poll:update', { pollId, votes });
+  // Poll creation
+  socket.on('poll:create', async ({ question, options, chatId, isQuiz, correctAnswer }) => {
+    const res = await fetch('http://poll-service:4008/v1/polls', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ question, options, chatId, isQuiz, correctAnswer })
+    });
+    const { pollId } = await res.json();
+    io.to(chatId).emit('message:receive', { type: 'poll', pollId, from: userId, msgId: `msg:${Date.now()}` });
   });
 
   socket.on('disconnect', async () => {
