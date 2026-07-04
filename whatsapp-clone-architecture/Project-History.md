@@ -3,14 +3,18 @@ Generated: 2026-07-05
 
 ## Version History
 
-### V10.2: Monetization + Identity + Engagement
+### V10.3: Engagement + Personalization
 **Added**: 
-1. Monetization service - Stories ads with revenue share
-2. Auth service - @usernames, phone-optional signup
-3. Channel Comments service - Threaded replies on Channel posts
+1. Status Engagement service - Emoji reactions + DM replies on Stories
+2. Notification Prefs service - Per-folder notification rules
+3. Scheduler extension - Scheduled Channel posts with media
 
-**Download**: whatsapp-clone-architecture-v10.2.zip
-**Total**: 21 microservices, 45+ features
+**Download**: whatsapp-clone-architecture-v10.3.zip
+**Total**: 23 microservices, 48+ features
+
+### V10.2: Monetization + Identity + Engagement
+**Added**: Stories ads, @usernames, Channel comments
+**Total**: 21 microservices
 
 ### V10.1: Power Features Edition
 **Added**: Video Notes, Analytics, E2EE Group Calls, Communities

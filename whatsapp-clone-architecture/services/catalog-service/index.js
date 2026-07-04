@@ -1,1 +1,1 @@
-// catalog-service - V10.2\nconsole.log('catalog-service running');
+// catalog-service - V10.3\nconsole.log('catalog-service running');

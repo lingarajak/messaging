@@ -1,17 +1,17 @@
-# WhatsApp-Clone V10.2 - Monetization + Identity + Engagement
+# WhatsApp-Clone V10.3 - Engagement + Personalization
 
 ## Overview
-V10.2 = V10.1 + Stories Ads, Usernames, Channel Comments.
+V10.3 = V10.2 + Stories emoji replies, Folder-specific notifications, Scheduled channel posts.
 
-Total: 21 microservices, 45+ features, full SuperApp stack.
+Total: 23 microservices, 48+ features.
 
 ## Services
 | Port | Service | Purpose | Version |
 | --- | --- | --- | --- |
 | 4000 | chat-service | Core WebSocket + E2EE + groups + communities + usernames | V1 |
 | 4001 | search-service | ElasticSearch indexing | V3 |
-| 4002 | status-service | 24h Stories + replies + **ads injection** | V3 |
-| 4003 | scheduler-service | BullMQ scheduled messages | V5 |
+| 4002 | status-service | 24h Stories + ads + **emoji replies** | V3 |
+| 4003 | scheduler-service | BullMQ scheduled messages + **channel posts** | V5 |
 | 4004 | bot-service | Telegram-style bot API | V5 |
 | 4005 | payment-service | Stripe in-chat payments | V6 |
 | 4006 | location-service | Live GPS streaming | V6 |
@@ -25,21 +25,23 @@ Total: 21 microservices, 45+ features, full SuperApp stack.
 | 4014 | analytics-service | Channels analytics dashboard | V10.1 |
 | 4015 | communities-service | WhatsApp-style Communities | V10.1 |
 | 4016 | livekit-e2ee-service | E2EE group calls via LiveKit | V10.1 |
-| 4017 | monetization-service | **NEW** Stories ads + revenue share | V10.2 |
-| 4018 | auth-service | **NEW** Usernames + phone optional | V10.2 |
-| 4019 | channel-comments-service | **NEW** Channel post threads | V10.2 |
+| 4017 | monetization-service | Stories ads + revenue share | V10.2 |
+| 4018 | auth-service | Usernames + phone optional | V10.2 |
+| 4019 | channel-comments-service | Channel post threads | V10.2 |
+| 4020 | status-engagement-service | **NEW** Stories emoji reactions + replies | V10.3 |
+| 4021 | notification-prefs-service | **NEW** Per-folder notification rules | V10.3 |
 | Kafka | notification-service | FCM/APNs push | V3 |
 
-## New in V10.2
+## New in V10.3
 
-### 1. Stories Ads `:4017`
-Monetization service injects ads between user Stories. Supports CPM/CPC, creator revenue share 55/45, skip after 5s. Ads stored in Postgres, served via `status-service`. Dashboard at `/admin/monetization`.
+### 1. Stories Emoji Replies `:4020`
+status-engagement-service handles emoji reactions on Stories. Tap Story → 8 quick emojis + reply box. Sends DM to Story author with Story thumbnail context. API: `POST /v1/stories/{id}/react`
 
-### 2. Usernames `:4018`
-Auth service lets users claim `@username`. Phone number becomes optional for signup. Lookup via `GET /v1/users/@handle`. Chat works with userId or username. Backwards compatible with V10.1 phone-based accounts.
+### 2. Folder-Specific Notifications `:4021`
+notification-prefs-service stores per-folder rules. Users can set: Work folder = muted 9-5, Family = always notify, Channels = daily digest only. Overrides global settings. API: `PUT /v1/folders/{id}/notify`
 
-### 3. Channel Comments `:4019`
-Each Channel post gets a comment thread. Replies are grouped under parent post, not sent to main chat. Supports reactions, replies, pin by admin. Socket: `channel:comment` → stored in Postgres, indexed in ElasticSearch.
+### 3. Scheduled Channel Posts `:4003`
+scheduler-service extended to support Channel posts. Admins schedule posts with media/polls. Uses same BullMQ as DMs. UI: 📅 button in Channel composer. API: `POST /v1/channels/{id}/schedule`
 
 ## Quick Start
 ```bash
@@ -52,20 +54,19 @@ export STRIPE_SECRET_KEY=sk_test_xxx
 export MEDIASOUP_ANNOUNCED_IP=your.public.ip
 export LIVEKIT_API_KEY=devkey
 export LIVEKIT_API_SECRET=secret
-export ADS_PROVIDER_KEY=xxx # For Stories ads
+export ADS_PROVIDER_KEY=xxx
 
-# Start all 21 services :4000 to :4019
-cd services/auth-service && npm i && npm run dev              # :4018 NEW
-cd ../monetization-service && npm i && npm run dev           # :4017 NEW
-cd ../channel-comments-service && npm i && npm run dev       # :4019 NEW
-# ... start other 18 services
+# Start all 23 services :4000 to :4021
+cd services/status-engagement-service && npm i && npm run dev # :4020 NEW
+cd ../notification-prefs-service && npm i && npm run dev     # :4021 NEW
+# ... start other 21 services including updated scheduler-service
 
-cd ../../client/web && npm i && npm run dev                   # :3000
+cd ../../client/web && npm i && npm run dev
 ```
 
-## UI Updates in V10.2
-- Stories: "Sponsored" label on ads, skip button after 5s
-- Profile: Set `@username`, hide phone number toggle
-- Channels: 💬 Comment button under each post → opens thread
+## UI Updates in V10.3
+- Stories: Emoji bar appears on tap, swipe up to reply
+- Settings → Notifications → Folders → per-folder toggles
+- Channel composer: 📅 Schedule button → date/time picker
 
-See Project-History.md for V1-V10.1 changelog.
+See Project-History.md for V1-V10.2 changelog.
