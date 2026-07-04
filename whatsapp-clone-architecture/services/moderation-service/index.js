@@ -1,2 +1,1 @@
-// moderation-service - V10
-console.log('moderation-service running on port');
+// moderation-service - V10.1\nconsole.log('moderation-service running');

@@ -1,9 +1,8 @@
 {
   "name": "translate-service",
-  "version": "10.0.0",
+  "version": "10.1.0",
   "main": "index.js",
   "scripts": {
     "dev": "node index.js"
-  },
-  "dependencies": {}
+  }
 }

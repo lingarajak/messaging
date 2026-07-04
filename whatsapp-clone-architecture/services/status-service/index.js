@@ -1,2 +1,1 @@
-// status-service - V10
-console.log('status-service running on port');
+// status-service - V10.1\nconsole.log('status-service running');

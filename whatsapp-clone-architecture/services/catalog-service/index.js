@@ -1,2 +1,1 @@
-// catalog-service - V10
-console.log('catalog-service running on port');
+// catalog-service - V10.1\nconsole.log('catalog-service running');

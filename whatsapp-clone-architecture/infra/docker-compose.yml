@@ -24,5 +24,9 @@ services:
   kibana:
     image: kibana:8.11.0
     ports: ["5601:5601"]
-  # App services would be built from ../services/* 
-  # Ports 4000-4012 reserved for microservices
+  livekit:
+    image: livekit/livekit-server:v1.5.2
+    ports: ["7880:7880", "7881:7881", "50000-60000:50000-60000/udp"]
+    environment:
+      LIVEKIT_KEYS: devkey: secret
+  # App services: 4000-4016

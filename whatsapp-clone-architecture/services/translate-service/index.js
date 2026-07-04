@@ -1,2 +1,1 @@
-// translate-service - V10
-console.log('translate-service running on port');
+// translate-service - V10.1\nconsole.log('translate-service running');
