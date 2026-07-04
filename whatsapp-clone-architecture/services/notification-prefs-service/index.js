@@ -1,1 +1,1 @@
-// notification-prefs-service - V10.5\nconsole.log('notification-prefs-service running');
+// notification-prefs-service - V10.6\nconsole.log('notification-prefs-service running');

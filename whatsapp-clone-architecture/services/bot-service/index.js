@@ -1,1 +1,1 @@
-// bot-service - V10.5\nconsole.log('bot-service running');
+// bot-service - V10.6\nconsole.log('bot-service running');

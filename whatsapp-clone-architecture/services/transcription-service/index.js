@@ -1,1 +1,1 @@
-// transcription-service - V10.5\nconsole.log('transcription-service running');
+// transcription-service - V10.6\nconsole.log('transcription-service running');

@@ -1,1 +1,1 @@
-// communities-service - V10.5\nconsole.log('communities-service running');
+// communities-service - V10.6\nconsole.log('communities-service running');

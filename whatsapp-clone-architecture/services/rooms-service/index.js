@@ -1,1 +1,1 @@
-// rooms-service - V10.5\nconsole.log('rooms-service running');
+// rooms-service - V10.6\nconsole.log('rooms-service running');

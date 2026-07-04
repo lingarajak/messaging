@@ -1,1 +1,1 @@
-// scheduler-service - V10.5\nconsole.log('scheduler-service running');
+// scheduler-service - V10.6\nconsole.log('scheduler-service running');

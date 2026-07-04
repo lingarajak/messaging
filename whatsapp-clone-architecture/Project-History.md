@@ -3,14 +3,18 @@ Generated: 2026-07-05
 
 ## Version History
 
-### V10.5: Community + Creator Economy
+### V10.6: Cloud + Premium + i18n
 **Added**: 
-1. Topics service - Forum-style threads in Groups like Discord
-2. Boost service - Paid Channel boosts with level perks via Stripe
-3. Mini Apps service - Bots Store + SDK for in-chat web apps
+1. Storage service - Shared folders in cloud with ACL
+2. Premium service - Subscription tier with perks via Stripe
+3. Channel Translation service - Auto-translate posts for subscribers
 
-**Download**: whatsapp-clone-architecture-v10.5.zip
-**Total**: 29 microservices, 55+ features
+**Download**: whatsapp-clone-architecture-v10.6.zip
+**Total**: 32 microservices, 60+ features
+
+### V10.5: Community + Creator Economy
+**Added**: Topics in Groups, Channel Boost, Mini Apps Store
+**Total**: 29 microservices
 
 ### V10.4: Privacy + Archive + AI
 **Added**: Anonymous Channel admins, Stories Highlights, Voice transcription

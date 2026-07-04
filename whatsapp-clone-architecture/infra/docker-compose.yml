@@ -29,4 +29,4 @@ services:
     ports: ["7880:7880", "7881:7881", "50000-60000:50000-60000/udp"]
     environment:
       LIVEKIT_KEYS: devkey: secret
-  # App services: 4000-4027
+  # App services: 4000-4030
