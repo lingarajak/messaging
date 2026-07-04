@@ -211,7 +211,6 @@ io.on('connection', async (socket) => {
   const originalSend = socket.on('message:send', async (data) => {});
 
   
-  // AI Summary request
   socket.on('ai:summarize', async ({ chatId }) => {
     const res = await fetch('http://ai-service:4007/v1/ai/summarize', {
       method: 'POST', headers: {'Content-Type':'application/json'},
@@ -221,7 +220,6 @@ io.on('connection', async (socket) => {
     socket.emit('ai:summary', { chatId, summary });
   });
 
-  // Poll creation
   socket.on('poll:create', async ({ question, options, chatId, isQuiz, correctAnswer }) => {
     const res = await fetch('http://poll-service:4008/v1/polls', {
       method: 'POST', headers: {'Content-Type':'application/json'},

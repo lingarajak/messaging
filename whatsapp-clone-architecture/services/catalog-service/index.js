@@ -2,13 +2,11 @@ const express = require('express');
 const { Pool } = require('pg');
 const Redis = require('ioredis');
 const { v4: uuidv4 } = require('uuid');
-
 const app = express();
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 app.use(express.json());
 
-// Create product catalog item
 app.post('/v1/catalog/products', async (req, res) => {
   const { businessId, name, price, image, description } = req.body;
   const productId = uuidv4();
@@ -17,13 +15,11 @@ app.post('/v1/catalog/products', async (req, res) => {
   res.json({ productId });
 });
 
-// Get catalog
 app.get('/v1/catalog/:businessId', async (req, res) => {
   const { rows } = await pool.query('SELECT * FROM products WHERE business_id = $1', [req.params.businessId]);
   res.json(rows);
 });
 
-// Add to cart
 app.post('/v1/cart/add', async (req, res) => {
   const { userId, productId, qty } = req.body;
   await redis.hincrby(`cart:${userId}`, productId, qty);
@@ -31,7 +27,6 @@ app.post('/v1/cart/add', async (req, res) => {
   res.json({ cart });
 });
 
-// Checkout - create order
 app.post('/v1/cart/checkout', async (req, res) => {
   const { userId, businessId } = req.body;
   const cart = await redis.hgetall(`cart:${userId}`);

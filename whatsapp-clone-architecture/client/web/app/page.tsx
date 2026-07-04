@@ -122,7 +122,10 @@ export default function Home() {
   const createPoll = () => {
     const q = prompt('Poll question:');
     const opts = prompt('Options comma-separated:')?.split(',');
-    if (q && opts) socket.emit('poll:create', { question: q, options: opts, chatId: 'user456' });
+    const isQuiz = confirm('Is this a quiz?');
+    let correctAnswer = null;
+    if (isQuiz) correctAnswer = prompt('Correct option index (0,1,2...):');
+    if (q && opts) socket.emit('poll:create', { question: q, options: opts, chatId: 'user456', isQuiz, correctAnswer });
   };
   const openCatalog = () => {
     window.open('http://localhost:4009/v1/catalog/business123', '_blank');
