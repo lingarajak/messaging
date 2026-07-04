@@ -1,5 +1,5 @@
 {
-  "name": "notification-service",
+  "name": "miniapps-service",
   "version": "10.5.0",
   "main": "index.js",
   "scripts": {

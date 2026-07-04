@@ -3,14 +3,18 @@ Generated: 2026-07-05
 
 ## Version History
 
-### V10.4: Privacy + Archive + AI
+### V10.5: Community + Creator Economy
 **Added**: 
-1. Channel Admin service - Anonymous posting as Channel identity
-2. Highlights service - Permanent Story collections on profiles
-3. Transcription service - Live captions in voice/video rooms via AWS Transcribe
+1. Topics service - Forum-style threads in Groups like Discord
+2. Boost service - Paid Channel boosts with level perks via Stripe
+3. Mini Apps service - Bots Store + SDK for in-chat web apps
 
-**Download**: whatsapp-clone-architecture-v10.4.zip
-**Total**: 26 microservices, 52+ features
+**Download**: whatsapp-clone-architecture-v10.5.zip
+**Total**: 29 microservices, 55+ features
+
+### V10.4: Privacy + Archive + AI
+**Added**: Anonymous Channel admins, Stories Highlights, Voice transcription
+**Total**: 26 microservices
 
 ### V10.3: Engagement + Personalization
 **Added**: Stories emoji replies, Folder-specific notifications, Scheduled channel posts

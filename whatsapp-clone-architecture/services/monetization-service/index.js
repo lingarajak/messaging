@@ -1,1 +1,1 @@
-// monetization-service - V10.4\nconsole.log('monetization-service running');
+// monetization-service - V10.5\nconsole.log('monetization-service running');
