@@ -1,1 +1,1 @@
-// location-service - V10.1\nconsole.log('location-service running');
+// location-service - V10.2\nconsole.log('location-service running');

@@ -3,18 +3,21 @@ Generated: 2026-07-05
 
 ## Version History
 
-### V10.1: Power Features Edition
+### V10.2: Monetization + Identity + Engagement
 **Added**: 
-1. Video Notes service - 60s circular videos like Telegram
-2. Analytics service - Channels dashboard with views/reach/growth
-3. LiveKit E2EE service - True E2EE group calls for 2-8 people
-4. Communities service - WhatsApp-style Community → Groups hierarchy
+1. Monetization service - Stories ads with revenue share
+2. Auth service - @usernames, phone-optional signup
+3. Channel Comments service - Threaded replies on Channel posts
 
-**Download**: whatsapp-clone-architecture-v10.1.zip
-**Total**: 18 microservices, 40+ features
+**Download**: whatsapp-clone-architecture-v10.2.zip
+**Total**: 21 microservices, 45+ features
+
+### V10.1: Power Features Edition
+**Added**: Video Notes, Analytics, E2EE Group Calls, Communities
+**Total**: 18 microservices
 
 ### V10: SuperApp Edition
 **Added**: Video Rooms, Translate, Moderation
 **Total**: 14 microservices
 
-See previous V1-V9 details in Project-History.md
+See V1-V9 in prior history files.
