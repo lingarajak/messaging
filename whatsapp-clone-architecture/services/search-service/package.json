@@ -1,0 +1,8 @@
+{
+  "name": "search-service",
+  "dependencies": {
+    "express": "^4.18.2",
+    "@elastic/elasticsearch": "^8.11.0",
+    "kafkajs": "^2.2.4"
+  }
+}
